@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="CProcess">
+      <UniqueIdentifier>{cad0ac03-6564-4d83-bc79-a889028f19f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{5a1e0b98-a0ca-4638-8a65-ab8153435bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Includes">
+      <UniqueIdentifier>{2f10b876-01cd-4bf2-869c-fe2793712d7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Options">
+      <UniqueIdentifier>{c1aeb38f-deba-40b1-ac94-691073e8dce5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cMain.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="CProcess.cpp">
+      <Filter>CProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Service.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CProcess.hpp">
+      <Filter>CProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Service.hpp">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="Options.hpp">
+      <Filter>Options</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
