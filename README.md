@@ -8,6 +8,7 @@
  <img src="https://img.shields.io/badge/open-source-blue.svg" alt="op">
 <img src="https://img.shields.io/aur/license/yaourt.svg" alt="lm">
 </p>
+<br>
 ![screenshot](http://i.imgur.com/mlLWBSU.png)
 
 ## Compiling
