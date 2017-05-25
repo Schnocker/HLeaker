@@ -1,6 +1,9 @@
-# HLeaker
-
-This allows you to use the process handles from services/protected processes like csrss and lsass protecting games.
+<h1 align="center">
+  <br>
+  HLeaker
+  <br>
+</h1>
+<h4 align="center">This allows you to use the process handles from services/protected processes like csrss and lsass.</h4>
  <img src="https://img.shields.io/badge/open-source-blue.svg" alt="op">
 <img src="https://img.shields.io/aur/license/yaourt.svg" alt="lm">
 
