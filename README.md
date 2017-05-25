@@ -4,12 +4,13 @@
   <br>
 </h1>
 <h4 align="center">This allows you to use the process handles from services/protected processes like csrss and lsass.</h4>
+
 <p align="center">
  <img src="https://img.shields.io/badge/open-source-blue.svg" alt="op">
 <img src="https://img.shields.io/aur/license/yaourt.svg" alt="lm">
 </p>
-<br>
-![screenshot](http://i.imgur.com/mlLWBSU.png)
+
+![screenshot](http://i.imgur.com/iZrUkIf.png)
 
 ## Compiling
 
