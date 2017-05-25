@@ -10,7 +10,9 @@
 <img src="https://img.shields.io/aur/license/yaourt.svg" alt="lm">
 </p>
 
-![screenshot](http://i.imgur.com/mlLWBSU.png)
+## Preview
+
+<a href="http://i.imgur.com/mlLWBSU.png" target="_blank">Screenshot</a>
 
 ## Compiling
 
