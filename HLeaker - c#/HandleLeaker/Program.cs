@@ -38,7 +38,6 @@ namespace HandleLeaker
                                 ServProcess = new CProcess(enumerator.Pid);
                                 if (Service.ServiceSetHandleStatus(ServProcess, (IntPtr)enumerator.hProcess, true, true) == true)
                                 {
-                                    MessageBox.Show(Directory.GetCurrentDirectory() + "\\" + Options.YourProcess + " " + enumerator.hProcess);
                                     hProcess = Service.ServiceStartProcess(null, Directory.GetCurrentDirectory() + "\\" + Options.YourProcess + " " + enumerator.hProcess, null, true, ServProcess.GetHandle());
                                     Service.ServiceSetHandleStatus(ServProcess, (IntPtr)enumerator.hProcess, false, false);
                                 }
