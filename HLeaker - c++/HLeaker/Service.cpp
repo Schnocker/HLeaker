@@ -172,7 +172,7 @@ namespace Service
 		VirtualFreeEx(hProcess, lpThread, 0x1000, MEM_RELEASE);
 		if(lpArg)
 		VirtualFreeEx(hProcess, lpArg, 0x1000, MEM_RELEASE);
-		return true;
+		return Status;
 	}
 	std::vector<HANDLE_INFO> ServiceEnumHandles(ULONG ProcessId, DWORD dwDesiredAccess)
 	{
