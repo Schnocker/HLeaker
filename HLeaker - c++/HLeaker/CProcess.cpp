@@ -214,7 +214,7 @@ namespace Process
 			CloseHandle(hFile);
 		if(lpFile)
 			VirtualFree(lpFile, dwFileSize, MEM_DECOMMIT);
-		return true;
+		return Status;
 	}
 
 	bool CProcess::IsValidProcess()
