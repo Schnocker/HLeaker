@@ -35,8 +35,6 @@ namespace HandleLeaker
 
         ~CProcess()
         {
-            if (this.hProcess != (IntPtr)0)
-                Kernel32.CloseHandle(this.hProcess);
         }
 
         public bool Wait(int Interval)

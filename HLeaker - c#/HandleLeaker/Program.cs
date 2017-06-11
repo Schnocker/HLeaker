@@ -12,6 +12,7 @@ namespace HandleLeaker
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        [STAThread]
         static void Main(string[] args)
         {
             CProcess CurrentProcess = new CProcess(), TargetProcess = new CProcess(Options.TargetProcess), ServProcess;
@@ -21,7 +22,6 @@ namespace HandleLeaker
             switch (args.Length)
             {
                 case 0:
-
                     CurrentProcess.SetPrivilege("SeDebugPrivilege", true);
                     CurrentProcess.SetPrivilege("SeTcbPrivilege", true);
                     TargetProcess.Wait(Options.DelayToWait);
@@ -40,11 +40,11 @@ namespace HandleLeaker
                                 {
                                     hProcess = Service.ServiceStartProcess(null, Directory.GetCurrentDirectory() + "\\" + Options.YourProcess + " " + enumerator.hProcess, null, true, ServProcess.GetHandle());
                                     Service.ServiceSetHandleStatus(ServProcess, (IntPtr)enumerator.hProcess, false, false);
+                                    counter++;
                                 }
                                 if (hProcess != null)
                                     Kernel32.CloseHandle(hProcess);
                                 ServProcess.Close();
-                                counter++;
                             }
                         }
                         TargetProcess.Close();
@@ -61,8 +61,6 @@ namespace HandleLeaker
                     break;
 
             }
-            
-            Kernel32.TerminateProcess(Kernel32.GetCurrentProcess(), 0);
         }
     }
 }

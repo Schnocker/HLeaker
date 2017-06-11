@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace HandleLeaker
 {
@@ -58,7 +59,7 @@ namespace HandleLeaker
             if (pAttributeList != IntPtr.Zero)
             {
                 Kernel32.DeleteProcThreadAttributeList(pAttributeList);
-                Kernel32.VirtualFree(pAttributeList, 0x1000, 0x8000);
+                Kernel32.VirtualFree(pAttributeList, (int)cbAttributeListSize, 0x4000);
             }
             if(pi.hThread != IntPtr.Zero)
             Kernel32.CloseHandle(pi.hThread);
@@ -67,8 +68,8 @@ namespace HandleLeaker
         public static Boolean ServiceSetHandleStatus(CProcess Process, IntPtr hObject, bool Protect, bool Inherit)
         {
             bool Is64 = false, Status = true;
-            byte[] W64Thread = { 0x48, 0x83, 0xEC, 0x28, 0x0F, 0xB6, 0x41, 0x08, 0x4C, 0x8D, 0x44, 0x24, 0x30, 0x41, 0xB9, 0x02, 0x00, 0x00, 0x00, 0x88, 0x44, 0x24, 0x31, 0x0F, 0xB6, 0x41, 0x0C, 0x4C, 0x8B, 0xD1, 0x48, 0x8B, 0x09, 0x88, 0x44, 0x24, 0x30, 0x41, 0x8D, 0x51, 0x02, 0x41, 0xFF, 0x52, 0x10, 0x33, 0xC9, 0x85, 0xC0, 0x0F, 0x94, 0xC1, 0x8B, 0xC1, 0x48, 0x83, 0xC4, 0x28, 0xC3 };
-            byte[] W32Thread = { 0x55, 0x8B, 0xEC, 0x8B, 0x4D, 0x08, 0x6A, 0x02, 0x0F, 0xB6, 0x41, 0x04, 0x88, 0x45, 0x09, 0x0F, 0xB6, 0x41, 0x08, 0x88, 0x45, 0x08, 0x8D, 0x45, 0x08, 0x50, 0x8B, 0x41, 0x0C, 0x6A, 0x04, 0xFF, 0x31, 0xFF, 0xD0, 0xF7, 0xD8, 0x1B, 0xC0, 0x40, 0x5D, 0xC2, 0x04, 0x00 };
+            byte[] W64Thread = { 0xC, 0xC7, 0xA8, 0x6C, 0x4B, 0xF2, 0x5, 0x4C, 0x8, 0xC9, 0x0, 0x60, 0x74, 0x5, 0xFD, 0x46, 0x44, 0x44, 0x44, 0xCC, 0x0, 0x60, 0x75, 0x4B, 0xF2, 0x5, 0x48, 0x8, 0xCF, 0x95, 0xC, 0xCF, 0x4D, 0xCC, 0x0, 0x60, 0x74, 0x5, 0xC9, 0x15, 0x46, 0x5, 0xBB, 0x16, 0x54, 0x77, 0x8D, 0xC1, 0x84, 0x4B, 0xD0, 0x85, 0xCF, 0x85, 0xC, 0xC7, 0x80, 0x6C, 0x87};
+            byte[] W32Thread = { 0x11, 0xCF, 0xA8, 0xCF, 0x9, 0x4C, 0x2E, 0x46, 0x4B, 0xF2, 0x5, 0x40, 0xCC, 0x1, 0x4D, 0x4B, 0xF2, 0x5, 0x4C, 0xCC, 0x1, 0x4C, 0xC9, 0x1, 0x4C, 0x14, 0xCF, 0x5, 0x48, 0x2E, 0x40, 0xBB, 0x75, 0xBB, 0x94, 0xB3, 0x9C, 0x5F, 0x84, 0x4, 0x19, 0x86, 0x40, 0x44};
             HANDLE_IN Args;
             IntPtr hThread = IntPtr.Zero, lpArgs = IntPtr.Zero, lpThread = IntPtr.Zero, WThread = IntPtr.Zero, WArgs = IntPtr.Zero;
 
@@ -104,25 +105,45 @@ namespace HandleLeaker
                 goto EXIT;
             }
 
-            if ((lpThread = Kernel32.VirtualAllocEx(Process.GetHandle(), IntPtr.Zero, 0x1000, 0x1000, 0x40)) == IntPtr.Zero ||
-                (lpArgs = Kernel32.VirtualAllocEx(Process.GetHandle(), IntPtr.Zero, 0x1000, 0x1000, 0x40)) == IntPtr.Zero)
+            if ((lpThread = Kernel32.VirtualAllocEx(Process.GetHandle(), IntPtr.Zero, Is64 ? W64Thread.Length : W32Thread.Length, 0x1000, 0x40)) == IntPtr.Zero ||
+                (lpArgs = Kernel32.VirtualAllocEx(Process.GetHandle(), IntPtr.Zero, Marshal.SizeOf(typeof(HANDLE_IN)), 0x1000, 0x40)) == IntPtr.Zero)
             {
                 Status = false;
                 goto EXIT;
+            }
+            for (int i = 0; i < (Is64 ? W64Thread.Length : W32Thread.Length); i++)
+            {
+                if (Is64)
+                    W64Thread[i] ^= 0x44;
+                else
+                    W32Thread[i] ^= 0x44;
             }
             WArgs = Marshal.AllocHGlobal(Marshal.SizeOf(WArgs));
             WThread = Marshal.AllocHGlobal(Is64 ? W64Thread.Length : W32Thread.Length);
             Marshal.Copy(Is64 ? W64Thread : W32Thread, 0, WThread, Is64 ? W64Thread.Length : W32Thread.Length);
             Marshal.StructureToPtr(Args, WArgs, true);
-
             if (!Kernel32.WriteProcessMemory(Process.GetHandle(),lpThread,WThread,Is64 ? W64Thread.Length : W32Thread.Length, IntPtr.Zero) ||
                 !Kernel32.WriteProcessMemory(Process.GetHandle(), lpArgs, WArgs, Marshal.SizeOf(Args), IntPtr.Zero))
             {
+                for (int i = 0; i < (Is64 ? W64Thread.Length : W32Thread.Length); i++)
+                {
+                    if (Is64)
+                        W64Thread[i] ^= 0x44;
+                    else
+                        W32Thread[i] ^= 0x44;
+                }
                 Status = false;
                 goto EXIT;
             }
+            for (int i = 0; i < (Is64 ? W64Thread.Length : W32Thread.Length); i++)
+            {
+                if (Is64)
+                    W64Thread[i] ^= 0x44;
+                else
+                    W32Thread[i] ^= 0x44;
+            }
 
-            if(ntdll.RtlCreateUserThread(Process.GetHandle(),IntPtr.Zero,false,IntPtr.Zero,IntPtr.Zero,IntPtr.Zero,lpThread,lpArgs, ref hThread,IntPtr.Zero) != 0)
+            if (ntdll.RtlCreateUserThread(Process.GetHandle(),IntPtr.Zero,false,IntPtr.Zero,IntPtr.Zero,IntPtr.Zero,lpThread,lpArgs, ref hThread,IntPtr.Zero) != 0)
             {
                 Status = false;
                 goto EXIT;
@@ -136,9 +157,9 @@ namespace HandleLeaker
             if ((WThread) != IntPtr.Zero)
                 Marshal.FreeHGlobal(WThread);
             if (lpThread != null)
-                Kernel32.VirtualFreeEx(Process.GetHandle(), lpThread, 0x1000, 0x8000);
+                Kernel32.VirtualFreeEx(Process.GetHandle(), lpThread, Is64 ? W64Thread.Length : W32Thread.Length, 0x4000);
             if (lpArgs != null)
-                Kernel32.VirtualFreeEx(Process.GetHandle(), lpArgs, 0x1000, 0x8000);
+                Kernel32.VirtualFreeEx(Process.GetHandle(), lpArgs, Marshal.SizeOf(typeof(HANDLE_IN)), 0x4000);
             return Status;
         }
         public static List<HANDLE_INFO> ServiceEnumHandles(int ProcessId, UInt32 DesiredAccess)
@@ -198,7 +219,7 @@ namespace HandleLeaker
                             if (Kernel32.GetProcessId(ProcessCopy) == ProcessId &&
                                 wHandles.ProcessID != ProcessId)
                             {
-                                if ((((int)wHandles.GrantedAccess & DesiredAccess)) == DesiredAccess)
+                                if ((((uint)(wHandles.GrantedAccess) & DesiredAccess)) == DesiredAccess)
                                 {
                                     hi = new HANDLE_INFO();
                                     hi.Pid = wHandles.ProcessID;
