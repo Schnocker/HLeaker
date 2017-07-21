@@ -25,8 +25,7 @@ namespace HandleLeaker
             SecurityImpersonation,
             SecurityDelegation
         }
-
-
+        
         public enum TOKEN_TYPE
         {
             TokenPrimary = 1,
