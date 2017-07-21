@@ -166,7 +166,6 @@ namespace HandleLeaker
         public static extern IntPtr GetModuleHandleA(string lpModuleName);
         [DllImport("kernel32.dll")]
         public static extern Boolean CreateProcessAsUserA(IntPtr hToken, string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, int dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref STARTUPINFOEX si, ref PROCESS_INFORMATION pi);
-
         [DllImport("kernel32.dll")]
         public static extern void DeleteProcThreadAttributeList(IntPtr lpAttributeList);
         [DllImport("kernel32.dll")]
