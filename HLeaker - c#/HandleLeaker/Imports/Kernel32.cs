@@ -121,7 +121,6 @@ namespace HandleLeaker
 
         #endregion Structs
         #region Functions
-
         [DllImport("kernel32.dll")]
         public static extern IntPtr CreateFileA(string lpFleName, UInt32 dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
         [DllImport("kernel32.dll")]
@@ -145,6 +144,8 @@ namespace HandleLeaker
         [DllImport("kernel32.dll")]
         public static extern bool TerminateProcess(IntPtr hProcess, int ExitStatus);
         [DllImport("kernel32.dll")]
+        public static extern bool TerminateThread(IntPtr hThread, int ExitStatus);
+        [DllImport("kernel32.dll")]
         public static extern bool OpenProcessToken(IntPtr hProcess, UInt32 DesiredAccess, ref IntPtr TokenHandle);
         [DllImport("KERNELBASE.dll")]
         public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges, ref TOKEN_PRIVILEGES NewState, int BufferLength, IntPtr PreviousState, ref int ReturnLength);
@@ -156,8 +157,6 @@ namespace HandleLeaker
         public static extern int GetCurrentProcessId();
         [DllImport("kernel32.dll")]
         public static extern int GetProcessId(IntPtr hProcess);
-        [DllImport("kernel32.dll")]
-        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr TargetProcessHandle, ref IntPtr lpTargetHandle, int dwDesiredAccess, bool bInherithandle, int dwOptions);
         [DllImport("kernel32.dll")]
         public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, IntPtr lpNumberOfBytesWritten);
         [DllImport("kernel32.dll")]
@@ -172,9 +171,10 @@ namespace HandleLeaker
         public static extern bool InitializeProcThreadAttributeList(IntPtr lpAttributeList, int dwAttributeCount, int dwFlags, ref IntPtr lpSize);
         [DllImport("kernel32.dll")]
         public static extern bool UpdateProcThreadAttribute(IntPtr lpAttributeList, uint dwFlags, IntPtr Attribute, ref IntPtr lpValue, IntPtr cbSize, IntPtr lpPreviousValue, IntPtr lpReturnSize);
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        public static extern byte[] GetCommandLine();
-
+        [DllImport("kernel32.dll")]
+        public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
+        [DllImport("kernel32.dll")]
+        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr TargetProcessHandle, ref IntPtr lpTargetHandle, int dwDesiredAccess, bool bInherithandle, int dwOptions);
         #endregion Function
     }
 }

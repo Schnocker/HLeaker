@@ -14,7 +14,7 @@ namespace HandleLeaker
         public struct SYSTEM_HANDLE
         {
             public int ProcessID;
-            public char ObjectTypeNumber;
+            public byte ObjectTypeNumber;
             public char Flags; 
             public ushort Handle;
             public IntPtr Object_Pointer;

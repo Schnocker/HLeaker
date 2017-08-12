@@ -36,7 +36,9 @@ namespace HandleLeaker
         ~CProcess()
         {
         }
-
+        /// <summary>
+        /// This functions waits for our target process to start.
+        /// </summary>
         public bool Wait(int Interval)
         {
             if (this.ProcessName.Length == 0)
@@ -54,7 +56,9 @@ namespace HandleLeaker
             }
             return true;
         }
-
+        /// <summary>
+        /// This functions sets the privilege of our target process
+        /// </summary>
         public bool SetPrivilege(string lpszPrivilege, bool bEnablePrivilege)
         {
             bool Status = true;
@@ -90,22 +94,30 @@ namespace HandleLeaker
                 Kernel32.CloseHandle(hToken);
             return Status;
         }
-
+        /// <summary>
+        /// This functions suspends our process
+        /// </summary>
         public bool Suspend()
         {
             return (ntdll.NtSuspendProcess(this.hProcess) == 0);
         }
-
+        /// <summary>
+        /// This function resumes our process
+        /// </summary>
         public bool Resume()
         {
             return (ntdll.NtResumeProcess(this.hProcess) == 0);
         }
-
+        /// <summary>
+        /// This functions kills our process
+        /// </summary>
         public bool Kill()
         {
             return Kernel32.TerminateProcess(this.hProcess, 0);
         }
-
+        /// <summary>
+        /// This functions opens our target process
+        /// </summary>
         public bool Open(UInt32 DesiredAccess = 0x1fffff)
         {
             if (this.ProcessName.Length == 0)
@@ -116,21 +128,30 @@ namespace HandleLeaker
                 this.hProcess = Kernel32.OpenProcess(DesiredAccess, false, this.ProcessList[0].Id);
             return IsValidProcess();
         }
-
+        /// <summary>
+        /// This functions closes our target process
+        /// </summary>
         public bool Close()
         {
             return Kernel32.CloseHandle(this.hProcess);
         }
-
+        /// <summary>
+        /// This functions returns our target process as handle
+        /// </summary>
         public IntPtr GetHandle()
         {
             return this.hProcess;
         }
-
+        /// <summary>
+        /// This functions returns our target process as process id
+        /// </summary>
         public int GetPid()
         {
             return Kernel32.GetProcessId(this.hProcess);
         }
+        /// <summary>
+        /// This functions returns the parent id of our target process
+        /// </summary>
         public int GetParentPid()
         {
             IntPtr[] pbi = new IntPtr[6];
@@ -139,7 +160,9 @@ namespace HandleLeaker
                 return (int)pbi[5];
             return 0;
         }
-
+        /// <summary>
+        /// This functions checks if the target process is x64
+        /// </summary>
         public int Is64(ref bool Is64)
         {
             int Status = 1;
@@ -204,7 +227,9 @@ namespace HandleLeaker
                 Kernel32.VirtualFree(lpFile, dwFileSize, 0x4000);
             return Status;
         }
-
+        /// <summary>
+        /// This functions checks if our target process is valid
+        /// </summary>
         public bool IsValidProcess()
         {
             if (hProcess == (IntPtr)(-1))
